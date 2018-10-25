@@ -71,7 +71,7 @@ def openloadx(links):
         print e,"salah"   
     
 def layarindo21(link,host,file):
-    gclo = "https://gugcloud.club/videoplayback?id="
+    gclo = "https://gugcloud.club/videoplayback?id=" # alamat download iframe embled
     try:
         
         session_requests = requests.session()
