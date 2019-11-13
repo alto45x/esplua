@@ -24,7 +24,51 @@ def regpa(url,tag,clas,value):
             return data
     else:
         return False 
-    
+def slinks(link):
+    print ("Deep link 1")
+    try:
+        link =  requests.get(link)
+        soup = BeautifulSoup(link.content, 'html.parser')
+        form = soup.findAll("form")
+        #print (str(form))
+        input = soup.findAll("input")
+        value =  str(input[0]['value'])
+        url = str(form[0]['action'])
+        name  = str(form[0]['name'])
+        API_ENDPOINT = str(form[0]['action'])
+        try:
+            datax = {'eastsafelink_id':value} 
+            r = requests.post(url = API_ENDPOINT, data = datax)
+            soup = BeautifulSoup(r.content, 'html.parser')
+            data = soup.findAll("script")
+            for i in data:
+                if str(i).find("generate") != -1:
+                    slink = str(i)[str(i).find("a='")+3:str(i).find("';window")]
+                    if str(slink).find("http") != -1:
+                        return str(slink)
+                    else:
+                        return str("No link")
+        except ValueError as e: 
+            return ("Error"+str(e))
+    except ValueError as e: 
+        return ("Error"+str(e))
+        
+def slinkss(link):
+    print ("Deep link 2")
+    try:
+        link =  requests.get(link)
+        soup = BeautifulSoup(link.content, 'html.parser')
+        data = soup.findAll("a")
+        #print (len(data))
+        for i in data:
+            if str(i).find("?r=") != -1:
+                link =  requests.get(str(i['href']))
+                return (str(link.url))
+            
+    except ValueError as e: 
+        return ("Error"+str(e)) 
+
+        
 class samehada:
     def samehadaku(self,host,link):
         page = requests.get(link)
@@ -35,17 +79,10 @@ class samehada:
                 for i in data :
                     if i.string == host:
                         try:
-                            #print i['href'] + "link 1"
-                            link =  requests.get(i['href'])
-                            soup = BeautifulSoup(link.content, 'html.parser')
-                            data = soup.findAll("div", {"class": "download-link"})[0].findAll("a")
-                            #print data[0]['href'] + "link 2"
-                            links = requests.get(data[0]['href'])
-                            soup = BeautifulSoup(links.content, 'html.parser')
-                            datax = soup.findAll("div", {"class": "download-link"})[0].findAll("a")
-                            #print datax[0]['href'] + "link 3"
-                            linkss = requests.get(datax[0]['href'])
-                            return linkss.url
+                           
+                            link =  slinks(i['href'])
+                            linkss = slinkss(link)
+                            return linkss
                         except: 
                             return "Error"+str(links)
             else:
@@ -54,17 +91,9 @@ class samehada:
                 for i in data :
                     if i.string == host:
                         try:
-                            #print i['href'] + "link 1"
-                            link =  requests.get(i['href'])
-                            soup = BeautifulSoup(link.content, 'html.parser')
-                            data = soup.findAll("div", {"class": "download-link"})[0].findAll("a")
-                            #print data[0]['href'] + "link 2"
-                            links = requests.get(data[0]['href'])
-                            soup = BeautifulSoup(links.content, 'html.parser')
-                            datax = soup.findAll("div", {"class": "download-link"})[0].findAll("a")
-                            #print datax[0]['href'] + "link 3"
-                            linkss = requests.get(datax[0]['href'])
-                            return linkss.url
+                            link =  slinks(i['href'])
+                            linkss = slinkss(link)
+                            return linkss
                         except: 
                             return "Error"+str(links)
                         
